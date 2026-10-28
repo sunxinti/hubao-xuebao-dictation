@@ -21,7 +21,7 @@ python3 scripts/prepare_runtime.py
 1. 下载 `runtime.lock.json` 中固定的 Astral Python 独立发行包与 Electron，并校验 SHA-256。
 2. 在 `local-engine/python/` 中安装 `requirements-lock.txt` 固定的二进制 wheel，使用 `--require-hashes` 校验，运行 pip check。
 3. 下载固定 revision 的模型文件，逐个校验 SHA-256。
-4. 解压 Electron 并验证其签名完整性。
+4. 解压 Electron，并逐文件、逐符号链接与官方哈希确认的压缩包比较；完成应用打包后再签名并校验。
 
 首次准备需要联网。运行时只使用应用内的 Python、模型和管道，不读取个人 Python site-packages、云服务账号或凭据。
 

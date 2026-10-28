@@ -1,6 +1,6 @@
 """Prepare verified Apple Silicon runtime and model artifacts; never use user site-packages."""
 from pathlib import Path
-import argparse, hashlib, json, os, platform, shutil, subprocess, sys, tarfile
+import argparse, hashlib, json, os, platform, shutil, stat, subprocess, sys, tarfile, zipfile
 from urllib.parse import quote
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -12,6 +12,27 @@ def digest(path):
 
 def checked(path, sha):
     return path.is_file() and digest(path) == sha
+
+def verify_electron(electron, archive_path):
+    # The official template has linker-signed binaries, but no sealed app resources.
+    # Verify against the authenticated archive; sign the completed app after packaging.
+    if not checked(archive_path, LOCK['electron']['sha256']):
+        raise RuntimeError('Electron archive checksum mismatch.')
+    expected=set()
+    with zipfile.ZipFile(archive_path) as archive:
+        for entry in archive.infolist():
+            if not entry.filename.startswith('Electron.app/') or entry.is_dir(): continue
+            rel=Path(entry.filename).relative_to('Electron.app')
+            if '..' in rel.parts or rel.is_absolute(): raise RuntimeError('Invalid archive path.')
+            destination=electron/rel;expected.add(rel.as_posix())
+            original=archive.read(entry)
+            if stat.S_ISLNK(entry.external_attr >> 16):
+                if not destination.is_symlink() or os.readlink(destination).encode()!=original:
+                    raise RuntimeError(f'Electron symlink mismatch: {rel}')
+            elif destination.is_symlink() or not destination.is_file() or digest(destination)!=hashlib.sha256(original).hexdigest():
+                raise RuntimeError(f'Electron file mismatch: {rel}')
+    actual={p.relative_to(electron).as_posix() for p in electron.rglob('*') if p.is_symlink() or p.is_file()}
+    if actual != expected: raise RuntimeError('Unexpected files in Electron template.')
 
 def download(url, destination, sha):
     if checked(destination, sha): return
@@ -73,7 +94,7 @@ def prepare(model_cache=None):
     if not electron.exists():
         electron.parent.mkdir(exist_ok=True)
         subprocess.run(['/usr/bin/ditto','-x','-k',str(cache/'electron.zip'),str(electron.parent)],check=True)
-    subprocess.run(['/usr/bin/codesign','--verify','--deep','--strict',str(electron)],check=True)
+    verify_electron(electron, cache/'electron.zip')
     print('Runtime prepared. Build with: python3 scripts/package.py')
 
 if __name__ == '__main__':

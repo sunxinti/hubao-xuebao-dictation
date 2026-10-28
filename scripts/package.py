@@ -1,6 +1,7 @@
 """Build a clean Apple Silicon app with local ad-hoc signing; not Apple notarization."""
 from pathlib import Path
 import hashlib, json, plistlib, shutil, subprocess, sys
+from prepare_runtime import verify_electron
 
 root=Path(__file__).resolve().parents[1]
 runtime=Path(sys.argv[1]).resolve() if len(sys.argv)>1 else root/'build/electron/Electron.app'
@@ -14,7 +15,7 @@ if not (engine/'python/.hubao-prepared.json').is_file(): raise SystemExit('Run s
 for item in lock['model']['files']:
     with (engine/'model'/item['name']).open('rb') as f:
         if hashlib.file_digest(f,'sha256').hexdigest()!=item['sha256']: raise SystemExit('Model verification failed.')
-subprocess.run(['/usr/bin/codesign','--verify','--deep','--strict',str(runtime)],check=True)
+verify_electron(runtime, root/'build/cache/electron.zip')
 target.parent.mkdir(exist_ok=True)
 subprocess.run(['/usr/bin/ditto',str(runtime),str(target)],check=True)
 resources=target/'Contents/Resources'
