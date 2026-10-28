@@ -1,0 +1,21 @@
+{
+  "name": "hubao-xuebao-dictation",
+  "productName": "虎宝雪宝听写",
+  "version": "0.4.0",
+  "private": true,
+  "type": "module",
+  "description": "Offline Qwen dictation for Apple Silicon, with HuBao and XueBao desktop companions.",
+  "main": "src/main.cjs",
+  "scripts": {
+    "test": "node --test tests/*.test.cjs"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "author": "sunxinti",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sunxinti/hubao-xuebao-dictation.git"
+  }
+}

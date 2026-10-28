@@ -1,0 +1,22 @@
+const {test}=require('node:test');
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const vm=require('node:vm');
+test('a completed transcript appears in the card and copies directly without opening settings',async()=>{
+ const source=path.join(__dirname,'../src');
+ const ids=[...fs.readFileSync(path.join(source,'card.html'),'utf8').matchAll(/id="([^"]+)"/g)].map(m=>m[1]);
+ const elements=Object.fromEntries(ids.map(id=>[id,{textContent:'',hidden:false,disabled:false}]));
+ const calls=[];let notify;
+ const state={mode:'idle',text:'',error:'',detail:'等待听写',seconds:0,settings:{autoCopy:true},localModel:{phase:'ready'}};
+ const blue={state:async()=>state,onState:fn=>notify=fn,command:c=>calls.push(c),copy:async text=>{calls.push(['copy',text]);return true;},showPanel:()=>calls.push('settings'),collapseCard:()=>calls.push('collapse')};
+ vm.runInNewContext(fs.readFileSync(path.join(source,'card.js'),'utf8'),{window:{blue},document:{body:{},getElementById:id=>{assert.ok(elements[id],id);return elements[id];}}});
+ await Promise.resolve();assert.equal(elements.copy.disabled,true);
+ elements.record.onclick();assert.deepEqual(calls,['toggle']);
+ notify({...state,mode:'recording',seconds:3});assert.equal(elements.record.textContent,'结束听写');assert.equal(elements.elapsed.textContent,'0:03');
+ notify({...state,mode:'transcribing'});assert.equal(elements.record.disabled,true);
+ const text='这是回归测试中的示例文字。\nHello.';
+ notify({...state,mode:'done',text});assert.equal(elements.text.textContent,text);assert.equal(elements.placeholder.hidden,true);assert.equal(elements.copy.disabled,false);
+ await elements.copy.onclick();assert.deepEqual(calls,['toggle',['copy',text]]);assert.equal(elements.copied.textContent,'已复制');
+ elements.collapse.onclick();assert.equal(calls.at(-1),'collapse');assert.equal(calls.includes('settings'),false);
+});

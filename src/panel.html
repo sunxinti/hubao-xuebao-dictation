@@ -1,0 +1,26 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'">
+<title>虎宝雪宝听写</title><link rel="stylesheet" href="panel.css"></head><body>
+<div class="titlebar"><span>虎宝雪宝听写</span><span class="version">离线版 · 0.4.0</span></div>
+<main>
+ <header><div><div class="eyebrow">YOUR LITTLE VOICE COMPANION</div><h1>你说，小狗来记。</h1><p>把脑海里的想法，轻轻说出来。</p></div><img src="pets.png" alt="虎宝和雪宝"></header>
+ <nav aria-label="面板"><button id="dictation-tab" class="selected">听写</button><button id="settings-tab">设置</button><span><i id="status-dot"></i><b id="status-label">待命中</b></span></nav>
+ <section id="dictation">
+  <div class="transcript-card"><div class="card-top"><span>这一段文字</span><span id="count">0 字</span></div>
+   <textarea id="transcript" aria-label="听写结果，可编辑" placeholder="点击下方麦克风，或按 ⌥ Space。&#10;&#10;说完停一小会儿，文字就会出现在这里。" spellcheck="false"></textarea>
+   <div class="card-bottom"><span id="copy-status">原意保留，不自动润色</span><button id="copy" disabled>复制文字 <span>⌘ C</span></button></div>
+  </div>
+  <div id="error" role="alert" hidden></div>
+  <div class="record-row"><button id="record" class="record" aria-label="开始听写"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="8" y="2" width="8" height="13" rx="4" fill="currentColor"/><path d="M5 10v2a7 7 0 0 0 14 0v-2M12 19v3M8 22h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button><div><strong id="record-title">开始听写</strong><p id="detail">随时按 ⌥ Space 开始或结束</p></div><button id="cancel" hidden>取消</button><span id="elapsed"></span></div>
+  <div class="wake-row"><div><strong>叫一声「虎宝雪宝」</strong><p id="wake-hint">开启后，在本机等待你的呼唤</p></div><button id="wake" class="switch" role="switch" aria-checked="false" aria-label="语音唤醒"><span></span></button></div>
+  <p class="privacy">唤醒和听写全在本机 · 无需联网 · 不上传录音</p>
+ </section>
+ <section id="settings" hidden>
+  <div class="settings-card"><label>千问本地语音模型</label><p>Qwen3-ASR-0.6B · 已随应用安装</p>
+   <strong id="model-status">正在加载…</strong><p id="model-detail">首次启动稍等片刻，之后可以直接说话。</p>
+   <div class="key-actions"><button id="reload-model">重新加载模型</button><button id="test-model" class="primary">检查本地模型</button></div>
+   <p id="model-test" role="status"></p><small>模型约 538 MB。录音留在本机，不需要账户或密钥。</small></div>
+  <div class="settings-card preferences"><label class="check"><span>转写完成后自动复制</span><input id="auto-copy" type="checkbox" checked></label><label class="check"><span>听写时显示右侧文字框</span><input id="show-card" type="checkbox" checked></label><label class="select"><span>宠物大小</span><select id="pet-scale"><option value="0.7">小 · 70%</option><option value="1" selected>中 · 100%</option><option value="1.25">大 · 125%</option></select></label><label class="select"><span>停顿多久后结束</span><select id="silence"><option value="1.2">1.2 秒</option><option value="1.8" selected>1.8 秒</option><option value="2.5">2.5 秒</option><option value="3.5">3.5 秒</option></select></label></div>
+  <div class="help"><strong>第一次见面</strong><p>① 点击桌面小狗，即刻展开并开始听写<br>② 说完停顿，文字直接显示在旁边<br>③ 点击卡片里的「复制文字」即可复制<br>④ 需要免手动时，在听写页开启语音唤醒</p><p>检查按钮只确认本地模型已加载，不打开麦克风，也不代表实际听写验收。单段最长 2 分钟。默认停顿 1.8 秒自动结束，也可再点击小狗结束。8 秒没有有效语音会自动取消。锁屏会暂停唤醒。小狗和卡片跟随各个桌面，包括全屏远程桌面；点击听写和复制不会抢走键盘焦点。拖动小狗可一起移动卡片。右键小狗可调大小、关闭自动展开文字框或退出。右键菜单栏图标可以退出。</p></div>
+ </section>
+</main><script src="panel.js"></script></body></html>

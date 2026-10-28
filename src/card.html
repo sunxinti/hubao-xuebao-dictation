@@ -1,0 +1,11 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; object-src 'none'; base-uri 'none'">
+<title>小狗听写卡片</title><link rel="stylesheet" href="card.css"></head><body>
+<main>
+ <header><div><i id="status-dot"></i><strong id="status">点一下，说给我听</strong></div><div class="tools"><button id="settings" aria-label="打开设置" title="设置">⚙</button><button id="collapse" aria-label="收起听写卡片" title="收起">×</button></div></header>
+ <div class="sub"><span id="detail">文字会留在这里，随手复制。</span><span id="elapsed"></span></div>
+ <div id="text" role="textbox" aria-readonly="true" aria-label="听写文字" tabindex="-1"></div>
+ <div id="placeholder">想到什么，就说出来。<br><span>说完停一下，文字会出现在这里。</span></div>
+ <p id="error" role="alert" hidden></p>
+ <footer><button id="record">开始听写</button><button id="cancel" hidden>取消</button><span id="copied">本机识别</span><button id="copy" disabled>复制文字</button></footer>
+</main><script src="card.js"></script></body></html>
